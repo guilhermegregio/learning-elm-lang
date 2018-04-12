@@ -1,120 +1,72 @@
-module Main exposing (..)
+module Main exposing (main)
 
-import Html exposing (..)
-import Html.Attributes exposing (..)
-
-
-type alias User =
-    { name : String
-    , email : String
-    , password : String
-    , loggedIn : Bool
-    }
+import Css exposing (..)
+import Html
+import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (id, type_, css, href, src)
+import Html.Styled.Events exposing (onClick)
+import SignupStyle exposing (..)
 
 
-initialModel : User
-initialModel =
-    { name = ""
-    , email = ""
-    , password = ""
-    , loggedIn = False
-    }
-
-
-view : User -> Html msg
-view user =
+view : Model -> Html Msg
+view model =
     div []
-        [ h1 [ headerStyle ] [ text "Sign up" ]
-        , Html.form [ formStyle ]
+        [ styledH1 [] [ text "Sign up" ]
+        , styledForm []
             [ div []
                 [ text "Name"
-                , input
+                , inputText
                     [ id "name"
                     , type_ "text"
-                    , inputTextStyle
                     ]
                     []
                 ]
             , div []
-                [ text "Email"
-                , input
+                [ text "E-mail"
+                , inputText
                     [ id "email"
                     , type_ "email"
-                    , inputTextStyle
                     ]
                     []
                 ]
             , div []
                 [ text "Password"
-                , input
+                , inputText
                     [ id "password"
                     , type_ "password"
-                    , inputTextStyle
                     ]
                     []
                 ]
             , div []
-                [ button
-                    [ type_ "submit"
-                    , buttonStyle
-                    ]
+                [ styledButton [ type_ "submit" ]
                     [ text "Create my account" ]
                 ]
             ]
         ]
 
 
-headerStyle : Attribute msg
-headerStyle =
-    style
-        [ ( "padding-left", "3cm" ) ]
-
-
-formStyle : Attribute msg
-formStyle =
-    style
-        [ ( "border-radius", "5px" )
-        , ( "background-color", "#f2f2f2" )
-        , ( "padding", "20px" )
-        , ( "width", "300px" )
-        ]
-
-
-inputTextStyle : Attribute msg
-inputTextStyle =
-    style
-        [ ( "display", "block" )
-        , ( "width", "260px" )
-        , ( "padding", "12px 20px" )
-        , ( "margin", "8px 0" )
-        , ( "border", "none" )
-        , ( "border-radius", "4px" )
-        ]
-
-
-buttonStyle : Attribute msg
-buttonStyle =
-    style
-        [ ( "width", "300px" )
-        , ( "background-color", "#397cd5" )
-        , ( "color", "white" )
-        , ( "padding", "14px 20px" )
-        , ( "margin-top", "10px" )
-        , ( "border", "none" )
-        , ( "border-radius", "4px" )
-        , ( "font-size", "16px" )
-        ]
-
-
-update : msg -> User -> User
-update msg model =
-    initialModel
-
-
-main : Program Never User msg
+main : Program Never Model Msg
 main =
-    beginnerProgram
-        { model = initialModel
-        , view = view
+    Html.beginnerProgram
+        { view = view >> toUnstyled
         , update = update
+        , model = initialModel
         }
+
+
+update : Msg -> Model -> Model
+update msg model =
+    model
+
+
+type Msg
+    = DoSomething
+
+
+type alias Model =
+    ()
+
+
+initialModel : Model
+initialModel =
+    ()
