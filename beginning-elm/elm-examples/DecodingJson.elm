@@ -16,6 +16,7 @@ type alias Post =
 type alias Model =
     { posts : List Post
     , errorMessage : Maybe String
+    , loading : Bool
     }
 
 
@@ -24,6 +25,7 @@ view model =
     div []
         [ button [ onClick SendHttpRequest ]
             [ text "Get data from server" ]
+        , code [] [ text (toString model.loading) ]
         , viewPostsOrError model
         ]
 
@@ -107,12 +109,17 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         SendHttpRequest ->
-            ( model, httpCommand )
+            ( { model
+                | loading = True
+              }
+            , httpCommand
+            )
 
         DataReceived (Ok posts) ->
             ( { model
                 | posts = posts
                 , errorMessage = Nothing
+                , loading = False
               }
             , Cmd.none
             )
@@ -148,6 +155,7 @@ init : ( Model, Cmd Msg )
 init =
     ( { posts = []
       , errorMessage = Nothing
+      , loading = False
       }
     , Cmd.none
     )
