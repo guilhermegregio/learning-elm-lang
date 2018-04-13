@@ -4,6 +4,7 @@ import Html exposing (..)
 import Html.Events exposing (onClick)
 import Http
 import Json.Decode exposing (string, int, list, field, map3, decodeString, Decoder)
+import Json.Decode.Pipeline exposing (decode, required, optional, requiredAt, optionalAt)
 
 
 type alias Post =
@@ -92,10 +93,10 @@ type Msg
 
 postDecoder : Decoder Post
 postDecoder =
-    map3 Post
-        (field "id" int)
-        (field "title" string)
-        (field "author" string)
+    decode Post
+        |> required "id" int
+        |> required "title" string
+        |> optional "author" string "anonymous"
 
 
 httpCommand : Cmd Msg
