@@ -3,14 +3,22 @@ module DecodingJson exposing (..)
 import Html exposing (..)
 import Html.Events exposing (onClick)
 import Http
+import Html.Attributes exposing (href)
 import Json.Decode exposing (string, int, list, field, map3, decodeString, Decoder)
 import Json.Decode.Pipeline exposing (decode, required, optional, requiredAt, optionalAt)
+
+
+type alias Author =
+    { name : String
+    , url : String
+    }
 
 
 type alias Post =
     { id : Int
     , title : String
-    , author : String
+    , authorName : String
+    , authorUrl : String
     }
 
 
@@ -82,7 +90,7 @@ viewPost post =
         , td []
             [ text post.title ]
         , td []
-            [ text post.author ]
+            [ a [ href post.authorUrl ] [ text post.authorName ] ]
         ]
 
 
@@ -91,12 +99,20 @@ type Msg
     | DataReceived (Result Http.Error (List Post))
 
 
+authorDecoder : Decoder Author
+authorDecoder =
+    decode Author
+        |> required "name" string
+        |> required "url" string
+
+
 postDecoder : Decoder Post
 postDecoder =
     decode Post
         |> required "id" int
         |> required "title" string
-        |> optional "author" string "anonymous"
+        |> optionalAt [ "author", "name" ] string "anonymous"
+        |> optionalAt [ "author", "url" ] string "http://google.com"
 
 
 httpCommand : Cmd Msg
